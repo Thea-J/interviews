@@ -35,3 +35,4 @@ export default App
 // Separate Components for the form & address rendering ... & api ?
 // Jest tests
 // Privacy: encrypt postcodes & auth key 
+// Styling
