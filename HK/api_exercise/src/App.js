@@ -1,21 +1,20 @@
 import React, { Component } from 'react'
 
 import PostcodeForm from './PostcodeForm'
-
+import AddressList from './AddressList'
 
 
 class App extends Component {
 
-state = {
+  state = {
 
-}
-
-  
-
+  }
+ 
   render() {
     return (
       <div>
         <PostcodeForm />
+        <AddressList />
       </div>
     )
   }
@@ -31,8 +30,9 @@ export default App
 //If incorrect, provide error handling
 //Render the addresses for that postcode from the HTTP response 
 
-//Improvements
+//Improvements:
 // Separate Components for the form & address rendering ... & api ?
+// Error messages should not hide postcodeForm
 // Jest tests
 // Privacy: encrypt postcodes & auth key 
 // Styling

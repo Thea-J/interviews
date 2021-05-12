@@ -11,8 +11,10 @@ export class PostcodeForm extends Component {
 
     state = {
         postcode: "",
-        hasError: false,
-        errorMessage: ""
+        hasValidationError: false,
+        hasApiError: false,
+        apiErrorMessage: "",
+        addressArray: []
     }
 
     handleInputChange = (event) => {
@@ -21,29 +23,46 @@ export class PostcodeForm extends Component {
         })
     }
     
-    handleApiError = (errorObject) => {
-      this.setState({hasError: true})
-      this.setState({errorMessage: errorObject})
-    }
-    
-      handleSubmit = (event) => {
+    handleSubmit = (event) => {
         event.preventDefault();
+
         let givenPostcode = this.state.postcode;
+        // this.validatePostcode(givenPostcode)
+
         api.get(`production/api/v1/addresses/?postcode=${givenPostcode}`)
-        .catch((error) => {this.handleApiError(error.response.data)})
-        // let regex = [A-Za-z][1-9][1-9][A-Za-z]{2};
-        // if (){
-        //   //If the postcode is valid, define the GET request
-        //   // [A-Za-z][1-9] [1-9][A-Za-z]{2}
-        // } else {
-        //   //Otherwise, error handling
-        // }
-      }
+        .catch((error) => {this.handleApiError(error.message)})
+    }
+
+    handleApiError = (message) => {
+        this.setState({hasApiError: true})
+        this.setState({apiErrorMessage: message})
+    }
+
+    // validatePostcode = (postcode) => {
+    //     let regex = '[A-Za-z][1-9][1-9][A-Za-z]{2}';
+    //     if (){
+    //       //If the postcode is valid, define the GET request
+    //       // [A-Za-z][1-9] [1-9][A-Za-z]{2}
+    //     } else {
+    //         this.setState({hasValidationError: true})
+    //     }
+    // }
+
+    renderErrorMessage = () => {
+        if (this.state.hasApiError){
+            return <h2> {this.state.apiErrorMessage} - Please Try Again </h2>
+        } 
+        else if (this.state.hasValidationError) {
+            return <h2> The Postcode You Entered Invalid - Please Try Again </h2> 
+        }
+    }
 
     render() {
         return (
             <div>
+                {this.renderErrorMessage()}
                 <form onSubmit = {this.handleSubmit}>
+                    <label> Enter Postcode: </label>
                     <input name="postcode" type="text" placeholder="Enter Postcode" value={this.state.postcode} onChange={this.handleInputChange}/>
                     <input type='submit'/>
                 </form>
