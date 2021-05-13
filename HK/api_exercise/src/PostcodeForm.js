@@ -27,10 +27,7 @@ export class PostcodeForm extends Component {
         event.preventDefault();
 
         let givenPostcode = this.state.postcode;
-        // this.validatePostcode(givenPostcode)
-
-        api.get(`production/api/v1/addresses/?postcode=${givenPostcode}`)
-        .catch((error) => {this.handleApiError(error.message)})
+        this.validatePostcode(givenPostcode)
     }
 
     handleApiError = (message) => {
@@ -38,22 +35,25 @@ export class PostcodeForm extends Component {
         this.setState({apiErrorMessage: message})
     }
 
-    // validatePostcode = (postcode) => {
-    //     let regex = '[A-Za-z][1-9][1-9][A-Za-z]{2}';
-    //     if (){
-    //       //If the postcode is valid, define the GET request
-    //       // [A-Za-z][1-9] [1-9][A-Za-z]{2}
-    //     } else {
-    //         this.setState({hasValidationError: true})
-    //     }
-    // }
+    validatePostcode = (postcode) => {
+        let regex = /[A-Za-z][1-9][1-9][A-Za-z]{2}/;
+        let editedPostcode = postcode.replace(/\s/g, "")
+        if (editedPostcode.match(regex)){
+            api.get(`production/api/v1/addresses/?postcode=${postcode}`)
+            .then((response) => {this.setState({addressArray: response.data})})
+            .catch((error) => {this.handleApiError(error.message)})
+        } else {
+            this.setState({hasValidationError: true})
+        }
+    }
 
     renderErrorMessage = () => {
         if (this.state.hasApiError){
+            // window.location.reload()
             return <h2> {this.state.apiErrorMessage} - Please Try Again </h2>
         } 
         else if (this.state.hasValidationError) {
-            return <h2> The Postcode You Entered Invalid - Please Try Again </h2> 
+            return <h2> The Postcode You Entered Is Invalid - Please Try Again </h2> 
         }
     }
 
@@ -62,9 +62,9 @@ export class PostcodeForm extends Component {
             <div>
                 {this.renderErrorMessage()}
                 <form onSubmit = {this.handleSubmit}>
-                    <label> Enter Postcode: </label>
-                    <input name="postcode" type="text" placeholder="Enter Postcode" value={this.state.postcode} onChange={this.handleInputChange}/>
-                    <input type='submit'/>
+                    <label htmlFor= "PostcodeFormInput"> Enter Postcode: </label>
+                    <input id= "PostcodeFormInput" name="postcode" type="text" placeholder="Enter Postcode" value={this.state.postcode} onChange={this.handleInputChange}/>
+                    <input type= "submit"/>
                 </form>
             </div>
         )
